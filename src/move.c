@@ -355,30 +355,9 @@ void tree_move(Con *con, direction_t direction) {
 
     Con *next = (direction == D_UP || direction == D_LEFT ? TAILQ_PREV(above, nodes_head, nodes) : TAILQ_NEXT(above, nodes));
 
-    if (next && !con_is_leaf(next)) {
-        DLOG("Moving into the bordering branch of our adjacent container\n");
-        target = con_descend_direction(next, direction);
-        position = (con_orientation(target->parent) != o ||
-                            direction == D_UP ||
-                            direction == D_LEFT
-                        ? AFTER
-                        : BEFORE);
-        insert_con_into(con, target, position);
-    } else if (!next &&
-               con->parent->parent->type == CT_WORKSPACE &&
-               con->parent->layout != L_DEFAULT &&
-               con_num_children(con->parent) == 1) {
-        /* Con is the lone child of a non-default layout container at the edge
-         * of the workspace. Treat it as though the workspace is its parent
-         * and move it to the next output. */
-        DLOG("Grandparent is workspace\n");
-        move_to_output_directed(con, direction);
-        return;
-    } else {
-        DLOG("Moving into container above\n");
-        position = (direction == D_UP || direction == D_LEFT ? BEFORE : AFTER);
-        insert_con_into(con, above, position);
-    }
+    DLOG("Moving into container above\n");
+    position = (direction == D_UP || direction == D_LEFT ? BEFORE : AFTER);
+    insert_con_into(con, above, position);
 
 end:
     /* force re-painting the indicators */
